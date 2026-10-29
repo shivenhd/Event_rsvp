@@ -260,5 +260,5 @@ if __name__ == "__main__":
     from seed import seed
     with app.app_context():
         if Event.query.count() == 0:
-            seed()
+            seed(db, Event, RSVP)
     app.run(debug=True, port=int(os.environ.get("PORT", 5000)))
