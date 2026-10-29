@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}My RSVPs{% endblock %}
+{% block content %}
+<div class="narrow">
+  <h1>My RSVPs</h1>
+  <form class="search" method="post">
+    <input type="email" name="email" value="{{ email }}" placeholder="Enter your college email" required>
+    <button class="btn">Find</button>
+  </form>
+  {% if rsvps %}
+    <div class="list">
+    {% for r in rsvps %}
+      <div class="row">
+        <div><a href="{{ url_for('event_detail', event_id=r.event.id) }}"><b>{{ r.event.title }}</b></a>
+          <p class="meta">📅 {{ r.event.starts_at|nice_date }} · 📍 {{ r.event.venue }}</p></div>
+        <form method="post" action="{{ url_for('update_rsvp', rsvp_id=r.id) }}" class="inline">
+          <select name="status" onchange="this.form.submit()">
+            <option {{ 'selected' if r.status=='Going' }}>Going</option>
+            <option {{ 'selected' if r.status=='Maybe' }}>Maybe</option>
+            <option value="cancel">Cancel RSVP</option>
+          </select>
+        </form>
+      </div>
+    {% endfor %}
+    </div>
+  {% elif searched %}
+    <div class="empty"><div>📭</div><h3>No RSVPs for {{ email }}</h3><p>Browse events and reserve a spot.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

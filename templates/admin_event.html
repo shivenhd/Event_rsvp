@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Attendees · {{ event.title }}{% endblock %}
+{% block content %}
+<a class="back" href="{{ url_for('admin') }}">← Dashboard</a>
+<div class="head-row"><h1>{{ event.title }}</h1>
+  <a class="btn small" href="{{ url_for('export_csv', event_id=event.id) }}">⬇ Export CSV</a></div>
+<section class="panel">
+  <p class="meta">{{ event.going_count }} going · {{ event.rsvps|length - event.going_count }} maybe · capacity {{ event.capacity }}</p>
+  <table>
+    <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Status</th><th>RSVP time</th></tr></thead>
+    <tbody>
+    {% for r in event.rsvps %}
+      <tr><td>{{ loop.index }}</td><td>{{ r.name }}</td><td>{{ r.email }}</td>
+          <td><span class="tag {{ 'warn' if r.status=='Maybe' }}">{{ r.status }}</span></td>
+          <td>{{ r.created_at.strftime('%d %b, %H:%M') }}</td></tr>
+    {% else %}<tr><td colspan="5">No RSVPs yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

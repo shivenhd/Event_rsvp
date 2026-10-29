@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Organizer dashboard{% endblock %}
+{% block content %}
+<div class="head-row"><h1>Organizer dashboard</h1><a class="btn ghost small" href="{{ url_for('admin_logout') }}">Log out</a></div>
+<div class="admin-grid">
+  <section class="panel">
+    <h3>Create event</h3>
+    <form method="post">
+      <label>Title<input name="title" required></label>
+      <label>Category<select name="category">{% for c in categories %}<option>{{ c }}</option>{% endfor %}</select></label>
+      <label>Date &amp; time<input type="datetime-local" name="starts_at" required></label>
+      <label>Venue<input name="venue" required></label>
+      <label>Organizer / club<input name="organizer" required></label>
+      <label>Capacity<input type="number" name="capacity" min="1" value="50" required></label>
+      <label>Description<textarea name="description" rows="4" required></textarea></label>
+      <button class="btn block">Create event</button>
+    </form>
+  </section>
+  <section class="panel">
+    <h3>All events</h3>
+    <table>
+      <thead><tr><th>Event</th><th>Date</th><th>Going</th><th>Total</th><th></th></tr></thead>
+      <tbody>
+      {% for e in events %}
+        <tr><td><a href="{{ url_for('admin_event', event_id=e.id) }}">{{ e.title }}</a></td>
+            <td>{{ e.starts_at.strftime('%d %b') }}</td>
+            <td>{{ e.going_count }}/{{ e.capacity }}</td><td>{{ e.rsvps|length }}</td>
+            <td><form method="post" action="{{ url_for('delete_event', event_id=e.id) }}" onsubmit="return confirm('Delete this event?')"><button class="icon-btn" title="Delete">🗑️</button></form></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}

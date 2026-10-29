@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}{{ event.title }}{% endblock %}
+{% block content %}
+<a class="back" href="{{ url_for('home') }}">← All events</a>
+<div class="detail">
+  <section class="panel">
+    <span class="tag">{{ event.category }}</span>
+    <h1>{{ event.title }}</h1>
+    <p class="meta">📅 {{ event.starts_at|nice_date }}</p>
+    <p class="meta">📍 {{ event.venue }} &nbsp;·&nbsp; 🎓 {{ event.organizer }}</p>
+    <div id="countdown" data-ts="{{ event.starts_at.isoformat() }}" class="countdown"></div>
+    <h3>About this event</h3>
+    <p>{{ event.description }}</p>
+    <a class="btn ghost" href="{{ url_for('calendar', event_id=event.id) }}">📆 Add to calendar</a>
+    <h3>Who's going ({{ event.going_count }})</h3>
+    <div class="avatars">
+      {% for r in event.rsvps if r.status == 'Going' %}<span class="avatar" title="{{ r.name }}">{{ r.name[0] }}</span>{% endfor %}
+    </div>
+  </section>
+
+  <aside class="panel sticky">
+    <h3>Reserve your spot</h3>
+    <div class="bar big"><i style="width: {{ event.fill_percent }}%"></i></div>
+    <p class="meta"><b>{{ event.spots_left }}</b> of {{ event.capacity }} spots left</p>
+    <form method="post" id="rsvp-form" novalidate>
+      <label>Full name<input name="name" value="{{ form.get('name','') }}" required minlength="2" placeholder="Aarav Mehta"></label>
+      <label>College email<input type="email" name="email" value="{{ form.get('email','') }}" required placeholder="you@college.edu"></label>
+      <label>Your response
+        <select name="status">
+          <option value="Going" {{ 'selected' if form.get('status')=='Going' }} {{ 'disabled' if event.is_full }}>✅ Going</option>
+          <option value="Maybe" {{ 'selected' if form.get('status')=='Maybe' or event.is_full }}>🤔 Maybe</option>
+        </select>
+      </label>
+      {% if event.is_full %}<p class="note">This event is full. You can still join as "Maybe".</p>{% endif %}
+      <button class="btn block" type="submit">Confirm RSVP</button>
+    </form>
+  </aside>
+</div>
+{% endblock %}

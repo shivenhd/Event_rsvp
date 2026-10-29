@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Find your next <span class="grad">campus event</span></h1>
+  <p>Discover workshops, fests and meetups. RSVP in seconds.</p>
+  <form class="search" method="get" action="{{ url_for('home') }}">
+    <input type="search" name="q" value="{{ q }}" placeholder="Search events, venues, topics…" aria-label="Search events">
+    {% if cat %}<input type="hidden" name="category" value="{{ cat }}">{% endif %}
+    <button class="btn" type="submit">Search</button>
+  </form>
+  <div class="stats">
+    <div><b>{{ total_events }}</b><span>Events</span></div>
+    <div><b>{{ total_rsvps }}</b><span>RSVPs</span></div>
+    <div><b>{{ popular.title.split(':')[0] if popular else '–' }}</b><span>Most popular</span></div>
+  </div>
+</section>
+
+<div class="chips">
+  <a class="chip {{ '' if cat else 'active' }}" href="{{ url_for('home', q=q) }}">All</a>
+  {% for c in categories %}
+    <a class="chip {{ 'active' if cat == c }}" href="{{ url_for('home', category=c, q=q) }}">{{ c }}</a>
+  {% endfor %}
+</div>
+
+{% if events %}
+<section class="grid">
+  {% for e in events %}
+  <article class="card cat-{{ e.category|lower }}">
+    <div class="card-top"><span class="tag">{{ e.category }}</span>
+      {% if e.is_full %}<span class="tag full">Full</span>{% elif e.spots_left <= 5 %}<span class="tag warn">Only {{ e.spots_left }} left</span>{% endif %}
+    </div>
+    <h3><a href="{{ url_for('event_detail', event_id=e.id) }}">{{ e.title }}</a></h3>
+    <p class="meta">📅 {{ e.starts_at|nice_date }}</p>
+    <p class="meta">📍 {{ e.venue }}</p>
+    <div class="bar" title="{{ e.fill_percent }}% full"><i style="width: {{ e.fill_percent }}%"></i></div>
+    <div class="card-foot">
+      <small>{{ e.going_count }} / {{ e.capacity }} going</small>
+      <a class="btn small" href="{{ url_for('event_detail', event_id=e.id) }}">{{ 'View' if e.is_full else 'RSVP' }} →</a>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% else %}
+<div class="empty"><div>🔍</div><h3>No events found</h3><p>Try a different search or category.</p></div>
+{% endif %}
+{% endblock %}

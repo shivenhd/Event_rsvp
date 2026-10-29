@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}CampusRSVP{% endblock %} · CampusRSVP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||'light'}catch(e){}</script>
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="{{ url_for('home') }}"><span class="logo">🎟️</span> Campus<b>RSVP</b></a>
+  <nav>
+    <a href="{{ url_for('home') }}">Events</a>
+    <a href="{{ url_for('my_rsvps') }}">My RSVPs</a>
+    <a href="{{ url_for('admin') }}">Organizer</a>
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark mode">🌓</button>
+  </nav>
+</header>
+<div id="toasts" aria-live="polite">
+  {% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="toast {{ category }}">{{ message }}</div>
+  {% endfor %}
+</div>
+<main>{% block content %}{% endblock %}</main>
+<footer>Built with Flask &amp; SQLite · Mini-Project, Experiment 13</footer>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
