@@ -2,7 +2,6 @@
 import random
 from datetime import datetime, timedelta
 
-from app import Event, RSVP, app, db
 
 EVENTS = [
     ("HackSprint 2026: 24-Hour Hackathon", "Tech", "Team up with fellow students to build a working prototype in 24 hours. Mentors from industry, free meals, and prizes for the top three teams. Beginners are welcome.", "Innovation Lab, Block C", "Coding Club", 3, 80),
@@ -20,7 +19,7 @@ NAMES = ["Aarav Mehta", "Diya Shah", "Rohan Iyer", "Sneha Patil", "Kabir Singh",
          "Karan Malhotra", "Tanvi Bhat", "Yash Verma", "Pooja Reddy", "Aditya Jain", "Kriti Sen"] + [f"Student {i}" for i in range(1, 30)]
 
 
-def seed():
+def seed(db, Event, RSVP):
     random.seed(7)
     base = datetime.now().replace(hour=10, minute=0, second=0, microsecond=0)
     for i, (title, cat, desc, venue, org, days, cap) in enumerate(EVENTS):
@@ -38,8 +37,9 @@ def seed():
 
 
 if __name__ == "__main__":
+    from app import Event, RSVP, app, db
     with app.app_context():
         db.drop_all()
         db.create_all()
-        seed()
+        seed(db, Event, RSVP)
         print("Seeded", Event.query.count(), "events and", RSVP.query.count(), "RSVPs")
